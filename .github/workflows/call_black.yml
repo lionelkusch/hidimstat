@@ -1,7 +1,9 @@
 # For more information see: https://black.readthedocs.io/en/stable/integrations/github_actions.html
 name: Lint
 
-on: [push, pull_request]
+on: 
+  # Allows you to run this workflow from another workflow
+  workflow_call
 
 jobs:
   lint:
@@ -9,3 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: psf/black@stable
+        with:
+          jupyter: true
