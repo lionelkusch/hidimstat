@@ -18,9 +18,14 @@ Functions
 
    aggregate_quantiles
    clustered_inference
+   dcrt_zero
+   dcrt_pvalue
+   data_simulation
    desparsified_lasso
+   desparsified_lasso_pvalue
+   desparsified_group_lasso_pvalue
    ensemble_clustered_inference
-   group_reid
+   reid
    hd_inference
    model_x_knockoff
    permutation_test

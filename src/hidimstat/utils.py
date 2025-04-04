@@ -208,10 +208,10 @@ def _bhq_threshold(pvals, fdr=0.1):
             selected_index = i
             break
     if selected_index <= n_features:
-        return pvals_sorted[selected_index]
+        threshold = pvals_sorted[selected_index]
     else:
-        # no threshold, all the pvalue are positive
-        return -1.0
+        threshold = -1.0
+    return threshold
 
 
 def _ebh_threshold(evals, fdr=0.1):
@@ -242,10 +242,10 @@ def _ebh_threshold(evals, fdr=0.1):
             selected_index = i
             break
     if selected_index <= n_features:
-        return evals_sorted[selected_index]
+        threshold = evals_sorted[selected_index]
     else:
-        # no threshold, no e-value is significant at the chosen level
-        return np.inf
+        threshold = np.inf
+    return threshold
 
 
 def _bhy_threshold(pvals, reshaping_function=None, fdr=0.1):
@@ -279,21 +279,21 @@ def _bhy_threshold(pvals, reshaping_function=None, fdr=0.1):
     if reshaping_function is None:
         temp = np.arange(n_features)
         sum_inverse = np.sum(1 / (temp + 1))
-        return _bhq_threshold(pvals, fdr / sum_inverse)
+        threshold = _bhq_threshold(pvals, fdr / sum_inverse)
     else:
         for i in range(n_features - 1, -1, -1):
             if pvals_sorted[i] <= fdr * reshaping_function(i + 1) / n_features:
                 selected_index = i
                 break
         if selected_index <= n_features:
-            return pvals_sorted[selected_index]
+            threshold = pvals_sorted[selected_index]
         else:
-            # no threshold, all the p-values are positive
-            return -1.0
+            threshold = -1.0
+    return threshold
 
 
 ########################## alpha Max Calculation ##########################
-def _alpha_max(X, y, use_noise_estimate=False):
+def _alpha_max(X, y, use_noise_estimate=False, fill_diagonal=False, axis=None):
     """
     Calculate alpha_max, which is the smallest value of the regularization parameter
     in the LASSO regression that yields non-zero coefficients.
@@ -302,7 +302,7 @@ def _alpha_max(X, y, use_noise_estimate=False):
     ----------
     X : array-like of shape (n_samples, n_features)
         Training data
-    y : array-like of shape (n_samples,)
+    y : array-like of shape (n_samples,) or (n_samples, n_features)
         Target values
     use_noise_estimate : bool, default=True
         Whether to use noise estimation in the calculation
@@ -319,14 +319,18 @@ def _alpha_max(X, y, use_noise_estimate=False):
     """
     n_samples, _ = X.shape
 
-    if not use_noise_estimate:
-        alpha_max = np.max(np.dot(X.T, y)) / n_samples
-    else:
+    Xt_y = np.dot(X.T, y)
+    if fill_diagonal:
+        np.fill_diagonal(Xt_y, 0)
+
+    alpha_max = np.max(Xt_y, axis=axis) / n_samples
+
+    if use_noise_estimate:
         # estimate the noise level
         norm_y = np.linalg.norm(y, ord=2)
         sigma_star = norm_y / np.sqrt(n_samples)
-
-        alpha_max = np.max(np.abs(np.dot(X.T, y)) / (n_samples * sigma_star))
+        # rectified by the noise
+        alpha_max = np.abs(alpha_max) / sigma_star
 
     return alpha_max
 

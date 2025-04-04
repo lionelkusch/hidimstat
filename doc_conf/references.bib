@@ -61,6 +61,18 @@ journal = {Ann. Stat.},
 doi = {10.1214/aos/1013699998}
 }
 
+@article{benjamini1995controlling,
+  title={Controlling the false discovery rate: a practical and powerful approach to multiple testing},
+  author={Benjamini, Yoav and Hochberg, Yosef},
+  journal={Journal of the Royal statistical society: series B (Methodological)},
+  volume={57},
+  number={1},
+  pages={289--300},
+  year={1995},
+  publisher={Wiley Online Library}
+}
+
+
 @article{Ren_2023,
     author = {Ren, Zhimei and Barber, Rina Foygel},
     title = "{Derandomised knockoffs: leveraging e-values for false discovery rate control}",
@@ -162,6 +174,32 @@ doi = {10.1214/aos/1013699998}
   publisher={JSTOR}
 }
 
+@article{candesPanningGoldModelX2017,
+  title = {Panning for {{Gold}}: {{Model-X Knockoffs}} for {{High-dimensional Controlled Variable Selection}}},
+  shorttitle = {Panning for {{Gold}}},
+  author = {Candes, Emmanuel and Fan, Yingying and Janson, Lucas and Lv, Jinchi},
+  year = {2017},
+  month = dec,
+  journal = {arXiv:1610.02351 [math, stat]},
+  eprint = {1610.02351},
+  primaryclass = {math, stat},
+  urldate = {2022-01-12},
+  abstract = {Many contemporary large-scale applications involve building interpretable models linking a large set of potential covariates to a response in a nonlinear fashion, such as when the response is binary. Although this modeling problem has been extensively studied, it remains unclear how to effectively control the fraction of false discoveries even in high-dimensional logistic regression, not to mention general high-dimensional nonlinear models. To address such a practical problem, we propose a new framework of \$model\$-\$X\$ knockoffs, which reads from a different perspective the knockoff procedure (Barber and Cand{\textbackslash}`es, 2015) originally designed for controlling the false discovery rate in linear models. Whereas the knockoffs procedure is constrained to homoscedastic linear models with \$n{\textbackslash}ge p\$, the key innovation here is that model-X knockoffs provide valid inference from finite samples in settings in which the conditional distribution of the response is arbitrary and completely unknown. Furthermore, this holds no matter the number of covariates. Correct inference in such a broad setting is achieved by constructing knockoff variables probabilistically instead of geometrically. To do this, our approach requires the covariates be random (independent and identically distributed rows) with a distribution that is known, although we provide preliminary experimental evidence that our procedure is robust to unknown/estimated distributions. To our knowledge, no other procedure solves the \$controlled\$ variable selection problem in such generality, but in the restricted settings where competitors exist, we demonstrate the superior power of knockoffs through simulations. Finally, we apply our procedure to data from a case-control study of Crohn's disease in the United Kingdom, making twice as many discoveries as the original analysis of the same data.},
+  archiveprefix = {arxiv},
+  keywords = {Mathematics - Statistics Theory,Statistics - Applications,Statistics - Methodology},
+}
+
+@article{liu2022fast,
+  title={Fast and powerful conditional randomization testing via distillation},
+  author={Liu, Molei and Katsevich, Eugene and Janson, Lucas and Ramdas, Aaditya},
+  journal={Biometrika},
+  volume={109},
+  number={2},
+  pages={277--293},
+  year={2022},
+  publisher={Oxford University Press}
+}
+
 @article{liuFastPowerfulConditional2021,
   title = {Fast and {{Powerful Conditional Randomization Testing}} via {{Distillation}}},
   author = {Liu, Molei and Katsevich, Eugene and Janson, Lucas and Ramdas, Aaditya},
@@ -174,6 +212,20 @@ doi = {10.1214/aos/1013699998}
   abstract = {We consider the problem of conditional independence testing: given a response Y and covariates (X,Z), we test the null hypothesis that Y is independent of X given Z. The conditional randomization test (CRT) was recently proposed as a way to use distributional information about X{\textbar}Z to exactly (non-asymptotically) control Type-I error using any test statistic in any dimensionality without assuming anything about Y{\textbar}(X,Z). This flexibility in principle allows one to derive powerful test statistics from complex prediction algorithms while maintaining statistical validity. Yet the direct use of such advanced test statistics in the CRT is prohibitively computationally expensive, especially with multiple testing, due to the CRT's requirement to recompute the test statistic many times on resampled data. We propose the distilled CRT, a novel approach to using state-of-the-art machine learning algorithms in the CRT while drastically reducing the number of times those algorithms need to be run, thereby taking advantage of their power and the CRT's statistical guarantees without suffering the usual computational expense. In addition to distillation, we propose a number of other tricks like screening and recycling computations to further speed up the CRT without sacrificing its high power and exact validity. Indeed, we show in simulations that all our proposals combined lead to a test that has similar power to the most powerful existing CRT implementations but requires orders of magnitude less computation, making it a practical tool even for large data sets. We demonstrate these benefits on a breast cancer dataset by identifying biomarkers related to cancer stage.},
   archiveprefix = {arxiv},
   keywords = {Statistics - Methodology},
+<<<<<<< HEAD
+}
+
+@article{reid2016study,
+  title={A study of error variance estimation in lasso regression},
+  author={Reid, Stephen and Tibshirani, Robert and Friedman, Jerome},
+  journal={Statistica Sinica},
+  pages={35--67},
+  year={2016},
+  publisher={JSTOR}
+||||||| 1e156f1
+  file = {/home/ahmad/Zotero/storage/8HRQZX3H/Liu et al. - 2021 - Fast and Powerful Conditional Randomization Testin.pdf;/home/ahmad/Zotero/storage/YFNDKN2B/2006.html}
+=======
+>>>>>>> main
 }
 
 @article{reid2016study,
@@ -184,6 +236,116 @@ doi = {10.1214/aos/1013699998}
   year={2016},
   publisher={JSTOR}
 }
+
+@article{Williamson_General_2023,
+  year = {2023}, 
+  title = {{A General Framework for Inference on Algorithm-Agnostic Variable Importance}}, 
+  author = {Williamson, Brian D. and Gilbert, Peter B. and Simon, Noah R. and Carone, Marco}, 
+  journal = {Journal of the American Statistical Association}, 
+  issn = {0162-1459}, 
+  doi = {10.1080/01621459.2021.2003200}, 
+  pages = {1645--1658}, 
+  number = {543}, 
+  volume = {118}, 
+}
+}
+
+@article{zhang2014confidence,
+  title={Confidence intervals for low dimensional parameters in high dimensional linear models},
+  author={Zhang, Cun-Hui and Zhang, Stephanie S},
+  journal={Journal of the Royal Statistical Society Series B: Statistical Methodology},
+  volume={76},
+  number={1},
+  pages={217--242},
+  year={2014},
+  publisher={Oxford University Press}
+}
+
+@article{van2014asymptotically,
+  title={On asymptotically optimal confidence regions and tests for high-dimensional models},
+  author={van de Geer, Sara and B{\"u}hlmann, Peter and Ritov, Ya'acov and Dezeure, Ruben},
+  journal={The Annals of Statistics},
+  pages={1166--1202},
+  year={2014},
+  publisher={JSTOR}
+}
+
+@article{javanmard2014confidence,
+  title={Confidence intervals and hypothesis testing for high-dimensional regression},
+  author={Javanmard, Adel and Montanari, Andrea},
+  journal={The Journal of Machine Learning Research},
+  volume={15},
+  number={1},
+  pages={2869--2909},
+  year={2014},
+  publisher={JMLR. org}
+}
+
+@article{bellec2022biasing,
+  title={De-biasing the lasso with degrees-of-freedom adjustment},
+  author={Bellec, Pierre C and Zhang, Cun-Hui},
+  journal={Bernoulli},
+  volume={28},
+  number={2},
+  pages={713--743},
+  year={2022},
+  publisher={Bernoulli Society for Mathematical Statistics and Probability}
+}
+
+@article{celentano2023lasso,
+  title={The lasso with general gaussian designs with applications to hypothesis testing},
+  author={Celentano, Michael and Montanari, Andrea and Wei, Yuting},
+  journal={The Annals of Statistics},
+  volume={51},
+  number={5},
+  pages={2194--2220},
+  year={2023},
+  publisher={Institute of Mathematical Statistics}
+}
+
+@phdthesis{chevalier2020statistical,
+  title={Statistical control of sparse models in high dimension},
+  author={Chevalier, J{\'e}r{\^o}me-Alexis},
+  year={2020},
+  school={Universit{\'e} Paris-Saclay}
+}
+
+@article{fan2012variance,
+  title={Variance estimation using refitted cross-validation in ultrahigh dimensional regression},
+  author={Fan, Jianqing and Guo, Shaojun and Hao, Ning},
+  journal={Journal of the Royal Statistical Society Series B: Statistical Methodology},
+  volume={74},
+  number={1},
+  pages={37--65},
+  year={2012},
+  publisher={Oxford University Press}
+}
+
+@article{reid2016study,
+  title={A study of error variance estimation in lasso regression},
+  author={Reid, Stephen and Tibshirani, Robert and Friedman, Jerome},
+  journal={Statistica Sinica},
+  pages={35--67},
+  year={2016},
+  publisher={JSTOR}
+}
+
+@article{chevalier2020statistical,
+  title={Statistical control for spatio-temporal meg/eeg source imaging with desparsified mutli-task lasso},
+  author={Chevalier, J{\'e}r{\^o}me-Alexis and Salmon, Joseph and Gramfort, Alexandre and Thirion, Bertrand},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={1759--1770},
+  year={2020}
+}
+
+@article{eshel2003yule,
+  title={The yule walker equations for the AR coefficients},
+  author={Eshel, Gidon},
+  journal={Internet resource},
+  volume={2},
+  pages={68--73},
+  year={2003}
 
 @article{chevalier_statistical_2020,
 	title = {Statistical control of sparse models in high dimension},
@@ -205,7 +367,6 @@ doi = {10.1214/aos/1013699998}
   year={1995},
   publisher={Wiley Online Library}
 }
-
 
 @article{wang2022false,
   title={False discovery rate control with e-values},

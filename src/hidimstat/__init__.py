@@ -1,7 +1,11 @@
 from .base_perturbation import BasePerturbation
 from .clustered_inference import clustered_inference, hd_inference
+from .desparsified_lasso import (
+    desparsified_lasso,
+    desparsified_lasso_pvalue,
+    desparsified_group_lasso_pvalue,
+)
 from .conditional_permutation_importance import CPI
-from .desparsified_lasso import desparsified_group_lasso, desparsified_lasso
 from .empirical_thresholding import empirical_thresholding
 from .ensemble_clustered_inference import ensemble_clustered_inference
 from .knockoffs import (
@@ -12,8 +16,9 @@ from .knockoffs import (
 )
 from .leave_one_covariate_out import LOCO
 from .multi_sample_split import aggregate_quantiles
-from .noise_std import group_reid, reid
+from .noise_std import reid
 from .permutation_importance import PermutationImportance
+from .dcrt import dcrt_zero, dcrt_pvalue
 from .permutation_test import permutation_test, permutation_test_pval
 from .scenario import multivariate_1D_simulation
 from .stat_tools import zscore_from_pval
@@ -27,10 +32,12 @@ __all__ = [
     "aggregate_quantiles",
     "clustered_inference",
     "dcrt_zero",
+    "dcrt_pvalue",
     "desparsified_lasso",
-    "desparsified_group_lasso",
+    "desparsified_lasso_pvalue",
+    "desparsified_group_lasso_pvalue",
     "ensemble_clustered_inference",
-    "group_reid",
+    "reid",
     "hd_inference",
     "model_x_knockoff",
     "model_x_knockoff_pvalue",
