@@ -56,10 +56,11 @@ from sklearn.cluster import FeatureAgglomeration
 from sklearn.feature_extraction import image
 
 from hidimstat.clustered_inference import clustered_inference
-from hidimstat.desparsified_lasso import desparsified_lasso, desparsified_lasso_pvalue
+from hidimstat.desparsified_lasso import DesparsifiedLasso
 from hidimstat.ensemble_clustered_inference import ensemble_clustered_inference
 from hidimstat.statistical_tools.p_values import zscore_from_pval
 from hidimstat._utils.scenario import multivariate_simulation
+from hidimstat.statistical_tools.p_values import pval_corr_from_pval
 
 #############################################################################
 # Specific plotting functions
@@ -232,18 +233,18 @@ beta_extended = weight_map_2D_extended(shape, roi_size, delta)
 # and referred to as Desparsified Lasso.
 
 # compute desparsified lasso
-beta_hat, sigma_hat, precision_diagonal = desparsified_lasso(X_init, y, n_jobs=n_jobs)
-pval, pval_corr, one_minus_pval, one_minus_pval_corr, cb_min, cb_max = (
-    desparsified_lasso_pvalue(X_init.shape[0], beta_hat, sigma_hat, precision_diagonal)
-)
+desparsified_lasso = DesparsifiedLasso(n_jobs=n_jobs)
+beta_hat, sigma_hat, precision_diagonal = desparsified_lasso.fit(X_init, y)
+pval = desparsified_lasso.importance()
+pval_corr = pval_corr_from_pval(pval)
 
 # compute estimated support (first method)
-zscore = zscore_from_pval(pval, one_minus_pval)
+zscore = zscore_from_pval(pval, 1 - pval)
 selected_dl = zscore > thr_nc  # use the "no clustering threshold"
 
 # compute estimated support (second method)
 selected_dl = np.logical_or(
-    pval_corr < fwer_target / 2, one_minus_pval_corr < fwer_target / 2
+    pval_corr < fwer_target / 2, 1 - pval_corr < fwer_target / 2
 )
 
 #############################################################################
