@@ -234,7 +234,7 @@ beta_extended = weight_map_2D_extended(shape, roi_size, delta)
 
 # compute desparsified lasso
 desparsified_lasso = DesparsifiedLasso(n_jobs=n_jobs)
-beta_hat, sigma_hat, precision_diagonal = desparsified_lasso.fit(X_init, y)
+desparsified_lasso.fit(X_init, y)
 pval = desparsified_lasso.importance()
 pval_corr = pval_corr_from_pval(pval)
 
