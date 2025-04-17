@@ -7,15 +7,12 @@ import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
 from scipy.linalg import toeplitz
 
-from hidimstat.desparsified_lasso import (
-    desparsified_lasso,
-    desparsified_lasso_pvalue,
-    desparsified_group_lasso_pvalue,
-)
+from hidimstat.desparsified_lasso import DesparsifiedLasso
 from hidimstat._utils.scenario import (
     multivariate_1D_simulation,
     multivariate_temporal_simulation,
 )
+from hidimstat.statistical_tools.p_values import pval_corr_from_pval
 
 
 def test_desparsified_lasso():
@@ -40,28 +37,24 @@ def test_desparsified_lasso():
     expected_pval_corr = np.concatenate(
         (np.zeros(support_size), 0.5 * np.ones(n_features - support_size))
     )
-
-    beta_hat, sigma_hat, precision_diag = desparsified_lasso(X, y)
-    pval, pval_corr, one_minus_pval, one_minus_pval_corr, cb_min, cb_max = (
-        desparsified_lasso_pvalue(
-            X.shape[0], beta_hat, sigma_hat, precision_diag, confidence=0.99
-        )
-    )
-    assert_almost_equal(beta_hat, beta, decimal=1)
-    assert_equal(cb_min < beta, True)
-    assert_equal(cb_max > beta, True)
+    desparsified_lasso = DesparsifiedLasso()
+    desparsified_lasso.fit(X, y)
+    pval = desparsified_lasso.importance(confidence=0.99)
+    pval_corr = pval_corr_from_pval(pval)
+    assert_almost_equal(desparsified_lasso.beta_hat, beta, decimal=1)
+    assert_equal(desparsified_lasso.confidence_bound_min < beta, True)
+    assert_equal(desparsified_lasso.confidence_bound_max > beta, True)
     assert_almost_equal(pval_corr, expected_pval_corr, decimal=1)
 
-    beta_hat, sigma_hat, precision_diag = desparsified_lasso(X, y, dof_ajdustement=True)
-    pval, pval_corr, one_minus_pval, one_minus_pval_corr, cb_min, cb_max = (
-        desparsified_lasso_pvalue(
-            X.shape[0], beta_hat, sigma_hat, precision_diag, confidence=0.99
-        )
-    )
-    assert_almost_equal(beta_hat, beta, decimal=1)
-    assert_equal(cb_min < beta, True)
-    assert_equal(cb_max > beta, True)
-    assert_almost_equal(pval_corr, expected_pval_corr, decimal=1)
+    desparsified_lasso_with_dot = DesparsifiedLasso(dof_ajdustement=True)
+    desparsified_lasso_with_dot.fit(X, y)
+    pval_with_dot = desparsified_lasso_with_dot.importance(confidence=0.99)
+    pval_corr_with_dot = pval_corr_from_pval(pval_with_dot)
+
+    assert_almost_equal(desparsified_lasso_with_dot.beta_hat, beta, decimal=1)
+    assert_equal(desparsified_lasso_with_dot.confidence_bound_min < beta, True)
+    assert_equal(desparsified_lasso_with_dot.confidence_bound_max > beta, True)
+    assert_almost_equal(pval_corr_with_dot, expected_pval_corr, decimal=1)
 
 
 def test_desparsified_group_lasso():
@@ -79,7 +72,7 @@ def test_desparsified_group_lasso():
     corr = toeplitz(np.geomspace(1, rho ** (n_times - 1), n_times))
     cov = np.outer(sigma, sigma) * corr
 
-    X, Y, beta, noise = multivariate_temporal_simulation(
+    X, y, beta, noise = multivariate_temporal_simulation(
         n_samples=n_samples,
         n_features=n_features,
         n_times=n_times,
@@ -87,34 +80,31 @@ def test_desparsified_group_lasso():
         sigma=sigma,
         rho_noise=rho,
     )
-
-    beta_hat, theta_hat, precision_diag = desparsified_lasso(
-        X, Y, group=True, covariance=cov
-    )
-    pval, pval_corr, one_minus_pval, one_minus_pval_corr = (
-        desparsified_group_lasso_pvalue(beta_hat, theta_hat, precision_diag)
-    )
+    desparsified_lasso = DesparsifiedLasso(group=True, covariance=cov)
+    desparsified_lasso.fit(X, y)
+    pval = desparsified_lasso.importance()
+    pval_corr = pval_corr_from_pval(pval)
 
     expected_pval_corr = np.concatenate(
         (np.zeros(support_size), 0.5 * np.ones(n_features - support_size))
     )
-
-    assert_almost_equal(beta_hat, beta, decimal=1)
+    assert_almost_equal(desparsified_lasso.beta_hat, beta, decimal=1)
     assert_almost_equal(pval_corr, expected_pval_corr, decimal=1)
 
-    beta_hat, theta_hat, precision_diag = desparsified_lasso(X, Y, group=True)
-    pval, pval_corr, one_minus_pval, one_minus_pval_corr = (
-        desparsified_group_lasso_pvalue(beta_hat, theta_hat, precision_diag, test="F")
-    )
+    desparsified_lasso_no_cov = DesparsifiedLasso(group=True)
+    desparsified_lasso_no_cov.fit(X, y)
+    pval_no_cov = desparsified_lasso_no_cov.importance(test="F")
+    pval_corr_no_cov = pval_corr_from_pval(pval_no_cov)
 
-    assert_almost_equal(beta_hat, beta, decimal=1)
-    assert_almost_equal(pval_corr, expected_pval_corr, decimal=1)
+    assert_almost_equal(desparsified_lasso_no_cov.beta_hat, beta, decimal=1)
+    assert_almost_equal(pval_corr_no_cov, expected_pval_corr, decimal=1)
 
     # Testing error is raised when the covariance matrix has wrong shape
     bad_cov = np.delete(cov, 0, axis=1)
-    np.testing.assert_raises(
-        ValueError, desparsified_lasso, X=X, y=Y, group=True, covariance=bad_cov
-    )
+    desparsified_lasso_bad_cov = DesparsifiedLasso(group=True, covariance=bad_cov)
+    np.testing.assert_raises(ValueError, desparsified_lasso_bad_cov.fit, X=X, y=y)
 
     with pytest.raises(ValueError, match=f"Unknown test 'r2'"):
-        desparsified_group_lasso_pvalue(beta_hat, theta_hat, precision_diag, test="r2")
+        desparsified_lasso_error = DesparsifiedLasso(group=True)
+        desparsified_lasso_error.fit(X, y)
+        pval_no_cov = desparsified_lasso_error.importance(test="r2")

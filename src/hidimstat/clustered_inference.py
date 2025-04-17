@@ -3,11 +3,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils import resample
 from sklearn.utils.validation import check_memory
 
-from .desparsified_lasso import (
-    desparsified_group_lasso_pvalue,
-    desparsified_lasso,
-    desparsified_lasso_pvalue,
-)
+from hidimstat.desparsified_lasso import DesparsifiedLasso
+from hidimstat.statistical_tools.p_values import pval_corr_from_pval
 
 
 def _subsampling(n_samples, train_size, groups=None, seed=0):
@@ -103,32 +100,13 @@ def hd_inference(X, y, method, n_jobs=1, memory=None, verbose=0, **kwargs):
         raise ValueError("Unknow method")
     group = method == "desparsified-group-lasso"
     print("hd_inference", group, kwargs)
-    beta_hat, theta_hat, precision_diag = desparsified_lasso(
-        X, y, group=group, n_jobs=n_jobs, verbose=verbose, memory=memory, **kwargs
+    desparsified_lasso = DesparsifiedLasso(
+        group=group, n_jobs=n_jobs, verbose=verbose, memory=memory, **kwargs
     )
-    if not group:
-        (
-            pval,
-            pval_corr,
-            one_minus_pval,
-            one_minus_pval_corr,
-            cb_min,
-            cb_max,
-        ) = desparsified_lasso_pvalue(
-            X.shape[0],
-            beta_hat,
-            theta_hat,
-            precision_diag,
-            confidence=0.95,
-            **kwargs,
-        )
-    else:
-        pval, pval_corr, one_minus_pval, one_minus_pval_corr = (
-            desparsified_group_lasso_pvalue(
-                beta_hat, theta_hat, precision_diag, **kwargs
-            )
-        )
-    return beta_hat, pval, pval_corr, one_minus_pval, one_minus_pval_corr
+    desparsified_lasso.fit(X, y)
+    pval = desparsified_lasso.importance(confidence=0.95, **kwargs)
+    pval_corr = pval_corr_from_pval(pval)
+    return desparsified_lasso.beta_hat, pval, pval_corr, 1 - pval, 1 - pval_corr
 
 
 def _degrouping(ward, beta_hat, pval, pval_corr, one_minus_pval, one_minus_pval_corr):

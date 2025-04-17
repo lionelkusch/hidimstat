@@ -1,10 +1,6 @@
 from .base_perturbation import BasePerturbation
 from .clustered_inference import clustered_inference, hd_inference
-from .desparsified_lasso import (
-    desparsified_lasso,
-    desparsified_lasso_pvalue,
-    desparsified_group_lasso_pvalue,
-)
+from .desparsified_lasso import DesparsifiedLasso
 from .conditional_permutation_importance import CPI
 from .empirical_thresholding import empirical_thresholding
 from .ensemble_clustered_inference import ensemble_clustered_inference
@@ -31,10 +27,7 @@ __all__ = [
     "clustered_inference",
     "dcrt_zero",
     "dcrt_pvalue",
-    "desparsified_lasso",
-    "desparsified_lasso_pvalue",
-    "desparsified_group_lasso_pvalue",
-    "ensemble_clustered_inference",
+    "DesparsifiedLasso",
     "reid",
     "hd_inference",
     "model_x_knockoff",

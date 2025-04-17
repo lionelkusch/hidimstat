@@ -20,9 +20,6 @@ Functions
    clustered_inference
    dcrt_zero
    dcrt_pvalue
-   desparsified_lasso
-   desparsified_lasso_pvalue
-   desparsified_group_lasso_pvalue
    ensemble_clustered_inference
    hd_inference
    model_x_knockoff
@@ -41,3 +38,4 @@ Classes
    LOCO
    CPI
    PermutationImportance
+   DesparsifiedLasso
