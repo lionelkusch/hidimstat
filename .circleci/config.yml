@@ -75,7 +75,7 @@ jobs:
 
 workflows:
   version: 2
-  build-doc-and-deploy:
+  build-doc:
     jobs:
       - python3
 
