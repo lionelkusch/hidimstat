@@ -39,7 +39,7 @@ jobs:
     steps:
       - run:
         name: test using key
-        command:
+        command: |
           echo $keypush > key.txt
           git clone https://github.com/lionelkusch/lionelkusch.github.io/settings/keys
           cd lionelkusch.github.io
