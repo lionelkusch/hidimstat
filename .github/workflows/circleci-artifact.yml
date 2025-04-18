@@ -1,8 +1,5 @@
 name: CircleCI artifacts redirector
-on: 
-  status:
-  pull_request:
-    branches: [ "main" ]
+on: [status]
 
 # Restrict the permissions granted to the use of secrets.GITHUB_TOKEN in this
 # github actions workflow:
@@ -14,6 +11,7 @@ jobs:
   circleci_artifacts_redirector_job:
     runs-on: ubuntu-latest
     # For testing this action on a fork, remove the "github.repository =="" condition.
+    if: "github.repository == 'lionelkusch/hidimstat' && github.event.context == 'ci/circleci: python3'"
     name: Run CircleCI artifacts redirector
     steps:
       - name: GitHub Action step
@@ -53,7 +51,7 @@ jobs:
         run: ls -R ./artifact
 
       - name: Upload Artifact to GitHub
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: circleci-artifact
           path: ./artifact
