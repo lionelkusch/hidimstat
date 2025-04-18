@@ -96,6 +96,7 @@ jobs:
               exit 1
             else
               echo "CircleCI job is still running. Waiting..."
+              echo "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow" | jq -r --arg job_name "$CIRCLECI_JOB_NAME"
               sleep 30
             fi
           done
