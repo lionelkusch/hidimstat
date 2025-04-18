@@ -22,13 +22,6 @@ jobs:
           artifact-path: 0/doc_conf/index.html
           circleci-jobs: python3
           job-title: Check the rendered docs here!
-  
-  download-artifact-ci:
-    name: download artifact ci
-    runs-on: ubuntu-latest
-    needs: [circleci_artifacts_redirector_job]
-
-    steps:
 
       - name: Install jq
         run: sudo apt-get install -y jq
@@ -61,7 +54,6 @@ jobs:
   deploy_documentation:
     name: 
     runs-on: ubuntu-latest
-    needs: [download-artifact-ci]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
