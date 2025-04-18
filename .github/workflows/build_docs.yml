@@ -117,7 +117,7 @@ jobs:
 
           # Get the job ID for the specific job
           echo "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job"
-          JOB_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job" | jq -r --arg job_name "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_name) | .id')
+          JOB_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job" | jq -r --arg job_number "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_number) | .id')
 
           # Get the artifact URL
           echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/job/$JOB_ID/artifacts" 
