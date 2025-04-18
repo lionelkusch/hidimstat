@@ -93,6 +93,7 @@ jobs:
               exit 1
             else
               echo "CircleCI job is still running. Waiting..."
+              echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline/$CIRCLECI_BUILD_NUM"
               sleep 30
             fi
           done
