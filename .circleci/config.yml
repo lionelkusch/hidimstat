@@ -38,15 +38,15 @@ jobs:
       - image: cimg/base:current
     steps:
       - run:
-        name: test using key
-        command: |
-          echo $keypush > key.txt
-          git clone https://github.com/lionelkusch/lionelkusch.github.io
-          cd lionelkusch.github.io
-          echo success > index.html
-          git commit -m "commit circle" index.html
-          git config --add --local core.sshCommand "ssh -i $(pwd)/../key.txt"
-          git push
+          name: test using key
+          command: |
+            echo $keypush > key.txt
+            git clone https://github.com/lionelkusch/lionelkusch.github.io
+            cd lionelkusch.github.io
+            echo success > index.html
+            git commit -m "commit circle" index.html
+            git config --add --local core.sshCommand "ssh -i $(pwd)/../key.txt"
+            git push
 
   deploy:
     docker:
