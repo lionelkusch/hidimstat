@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DocHTML
-          path: doc/_build/html
+          path: doc_conf/_build/html
 
   deploy_on_main:
     runs-on: ubuntu-latest
