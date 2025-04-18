@@ -31,7 +31,7 @@ jobs:
       - name: Sphinx build
         id: build-docs
         run: |
-          sphinx-build -b html doc_conf doc/_build/html
+          cd doc_conf; make html
       - name: Upload documentation
         if: steps.build-docs.outcome == 'success'
         uses: actions/upload-artifact@v4
@@ -68,82 +68,10 @@ jobs:
           directory: hidimstat
           github_token: ${{ secrets.GITHUB_TOKEN }}
           
-  get_artifact:
-    name: Deploy documentation  
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install jq
-        run: sudo apt-get install -y jq
-
-      - name: Wait for Specific CircleCI Job to Complete
-        id: wait_for_circleci_job
-        run: |
-          CIRCLECI_TOKEN=${{ secrets.CIRCLECI_TOKEN }}
-          CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  # Replace with your CircleCI project slug
-          CIRCLECI_JOB_NAME="build-doc"  # Replace with your specific job name
-
-          # Get the latest pipeline ID
-          PIPELINE_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].id')
-
-          # Poll the job status until it completes
-          while true; do
-            JOB_STATUS=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow" | jq -r --arg job_name "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_name) | .status')
-            if [[ "$JOB_STATUS" == "success" ]]; then
-              echo "CircleCI job completed successfully."
-              break
-            elif [[ "$JOB_STATUS" == "failed" ]]; then
-              echo "CircleCI job failed."
-              exit 1
-            else
-              echo "CircleCI job is still running. Waiting..."
-              sleep 30
-            fi
-          done
-
-      - name: Get CircleCI Artifact URL
-        id: get_artifact_url
-        run: |
-          CIRCLECI_TOKEN=${{ secrets.CIRCLECI_TOKEN }}
-          CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  # Replace with your CircleCI project slug
-          CIRCLECI_JOB_NAME="python3"  # Replace with your specific job name
-
-          # Get the latest pipeline ID
-          echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline"
-          PIPELINE_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].id')
-
-          # Get the latest workflow ID
-          echo "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow"
-          WORKFLOW_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow" | jq -r '.items[0].id')
-
-          # Get the job ID for the specific job
-          echo "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job"
-          JOB_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job" | jq -r --arg job_number "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_number) | .id')
-
-          # Get the artifact URL
-          echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/job/$JOB_ID/artifacts" 
-          ARTIFACT_URL=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/job/$JOB_ID/artifacts" | jq -r '.items[0].url')
-          echo "::set-output name=artifact_url::$ARTIFACT_URL"
-
-      - name: Download Artifact
-        run: |
-          ARTIFACT_URL=${{ steps.get_artifact_url.outputs.artifact_url }}
-          curl -L -o artifact.zip "$ARTIFACT_URL"
-          unzip artifact.zip -d ./artifact
-
-      - name: List Artifact Contents
-        run: ls -R ./artifact
-
-      - name: Upload Artifact to GitHub
-        uses: actions/upload-artifact@v4
-        with:
-          name: circleci-artifact
-          path: ./artifact
-  
-  
   deploy_documentation:
     name: Deploy documentation  
     runs-on: ubuntu-latest
-    needs: [get_artifact]
+    needs: [build_docs]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
