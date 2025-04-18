@@ -40,12 +40,15 @@ jobs:
       - run:
           name: test using key
           command: |
+            set -e
             echo $keypush > key.txt
             git clone https://github.com/lionelkusch/lionelkusch.github.io
             cd lionelkusch.github.io
             echo success > index.html
-            git commit -m "commit circle" index.html
+            git config --add --lobal user.email "documentation@deployauto"
+            git config --add --lobal user.name "Bot"
             git config --add --local core.sshCommand "ssh -i $(pwd)/../key.txt"
+            git commit -m "commit circle" index.html
             git push
 
   deploy:
