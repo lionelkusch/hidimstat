@@ -80,14 +80,14 @@ jobs:
         run: |
           CIRCLECI_TOKEN=${{ secrets.CIRCLECI_TOKEN }}
           CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  # Replace with your CircleCI project slug
-          CIRCLECI_JOB_NAME="your_job_name"  # Replace with your specific job name
+          CIRCLECI_JOB_NAME="python3"  # Replace with your specific job name
 
           # Get the latest pipeline ID
           PIPELINE_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].id')
 
           # Poll the job status until it completes
           while true; do
-            JOB_STATUS=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/job" | jq -r --arg job_name "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_name) | .status')
+            JOB_STATUS=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow" | jq -r --arg job_name "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_name) | .status')
             if [[ "$JOB_STATUS" == "success" ]]; then
               echo "CircleCI job completed successfully."
               break

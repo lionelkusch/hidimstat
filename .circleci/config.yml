@@ -78,6 +78,4 @@ workflows:
   build-doc-and-deploy:
     jobs:
       - python3
-      - deploy:
-          requires:
-            - python3
+
