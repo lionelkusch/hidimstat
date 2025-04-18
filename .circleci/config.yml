@@ -33,6 +33,21 @@ jobs:
             - /home/circleci/nilearn_data
             - /home/circleci/sklearn_data
 
+  deploy_test:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - run:
+        name: test using key
+        command:
+          echo $keypush > key.txt
+          git clone https://github.com/lionelkusch/lionelkusch.github.io/settings/keys
+          cd lionelkusch.github.io
+          echo success > index.html
+          git commit -m "commit circle" index.html
+          git config --add --local core.sshCommand "ssh -i $(pwd)/../key.txt"
+          git push
+
   deploy:
     docker:
       - image: cimg/python:3.9
@@ -78,6 +93,7 @@ workflows:
   build-doc-and-deploy:
     jobs:
       - python3
+      - deploy_test
       - deploy:
           requires:
             - python3
