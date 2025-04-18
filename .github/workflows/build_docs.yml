@@ -75,17 +75,20 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      - name: Wait for CircleCI Job to Complete
-        id: wait_for_circleci
+      - name: Wait for Specific CircleCI Job to Complete
+        id: wait_for_circleci_job
         run: |
           CIRCLECI_TOKEN=${{ secrets.CIRCLECI_TOKEN }}
           CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  # Replace with your CircleCI project slug
-          CIRCLECI_BUILD_NUM=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].number')
+          CIRCLECI_JOB_NAME="your_job_name"  # Replace with your specific job name
+
+          # Get the latest pipeline ID
+          PIPELINE_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].id')
 
           # Poll the job status until it completes
           while true; do
-            JOB_STATUS=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline/$CIRCLECI_BUILD_NUM" | jq -r '.state')
-            if [[ "$JOB_STATUS" == "completed" ]]; then
+            JOB_STATUS=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/job" | jq -r --arg job_name "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_name) | .status')
+            if [[ "$JOB_STATUS" == "success" ]]; then
               echo "CircleCI job completed successfully."
               break
             elif [[ "$JOB_STATUS" == "failed" ]]; then
@@ -93,7 +96,6 @@ jobs:
               exit 1
             else
               echo "CircleCI job is still running. Waiting..."
-              echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline/$CIRCLECI_BUILD_NUM"
               sleep 30
             fi
           done
