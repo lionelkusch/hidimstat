@@ -96,8 +96,6 @@ jobs:
               exit 1
             else
               echo "CircleCI job is still running. Waiting..."
-              echo "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow" 
-              echo "$JOB_STATUS"
               sleep 30
             fi
           done
@@ -106,9 +104,21 @@ jobs:
         id: get_artifact_url
         run: |
           CIRCLECI_TOKEN=${{ secrets.CIRCLECI_TOKEN }}
-          CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  
-          CIRCLECI_BUILD_NUM=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].number')
-          ARTIFACT_URL=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/$CIRCLECI_BUILD_NUM/artifacts" | jq -r '.items[0].url')
+          CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  # Replace with your CircleCI project slug
+          CIRCLECI_JOB_NAME="your_job_name"  # Replace with your specific job name
+
+          # Get the latest pipeline ID
+          PIPELINE_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline" | jq -r '.items[0].id')
+
+          # Get the latest workflow ID
+          WORKFLOW_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/pipeline/$PIPELINE_ID/workflow" | jq -r '.items[0].id')
+
+          # Get the job ID for the specific job
+          JOB_ID=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job" | jq -r --arg job_name "$CIRCLECI_JOB_NAME" '.items[] | select(.name == $job_name) | .id')
+
+          # Get the artifact URL
+          echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/job/$JOB_ID/artifacts" 
+          ARTIFACT_URL=$(curl -s -H "Circle-Token: $CIRCLECI_TOKEN" "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/job/$JOB_ID/artifacts" | jq -r '.items[0].url')
           echo "::set-output name=artifact_url::$ARTIFACT_URL"
 
       - name: Download Artifact
