@@ -44,7 +44,7 @@ jobs:
             set -x
             mkdir -p ~/.ssh
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo "${{ keypush }}" > ~/.ssh/github_actions
+            echo "$keypush" > ~/.ssh/github_actions
             git clone https://github.com/lionelkusch/lionelkusch.github.io
             cd lionelkusch.github.io
             echo success > index.html
