@@ -41,7 +41,7 @@ jobs:
         name: test using key
         command: |
           echo $keypush > key.txt
-          git clone https://github.com/lionelkusch/lionelkusch.github.io/settings/keys
+          git clone https://github.com/lionelkusch/lionelkusch.github.io
           cd lionelkusch.github.io
           echo success > index.html
           git commit -m "commit circle" index.html
