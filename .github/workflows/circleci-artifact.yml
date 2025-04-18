@@ -1,5 +1,8 @@
 name: CircleCI artifacts redirector
-on: [status]
+on: 
+  status:
+  pull_request:
+    branches: [ "main" ]
 
 # Restrict the permissions granted to the use of secrets.GITHUB_TOKEN in this
 # github actions workflow:
