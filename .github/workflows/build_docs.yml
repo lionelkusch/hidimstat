@@ -105,7 +105,7 @@ jobs:
         run: |
           CIRCLECI_TOKEN=${{ secrets.CIRCLECI_TOKEN }}
           CIRCLECI_PROJECT_SLUG="gh/lionelkusch/hidimstat"  # Replace with your CircleCI project slug
-          CIRCLECI_JOB_NAME="build-doc"  # Replace with your specific job name
+          CIRCLECI_JOB_NAME="python3"  # Replace with your specific job name
 
           # Get the latest pipeline ID
           echo "https://circleci.com/api/v2/project/$CIRCLECI_PROJECT_SLUG/pipeline"
