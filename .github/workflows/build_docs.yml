@@ -111,7 +111,7 @@ jobs:
     needs: [build_docs]
     steps:
     -   name: Trigger hosting job on circle ci
-        run: |4
+        run: |
             echo ${{ github.event_name}}
             echp ${{ github.event.commits.id}}
             COMMIT_SHA=${{ github.event.workflow_run.head_sha }}
