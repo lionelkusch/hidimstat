@@ -118,7 +118,7 @@ jobs:
             echo ${{ github.event.workflow.head_sha}}
             COMMIT_SHA=${GITHUB_SHA}
             REPO_NAME=${{ github.event.repository }}
-            echo "${{ github.api_url}}/${{github.repository}}/commits/${{github.sha}}/pulls"
+            echo "${{ github.api_url}}/repos/${{github.repository}}/commits/${{github.sha}}/pulls"
 
             PULL_REQUEST_NUMBER=$(curl \
                 -H "Accept: application/vnd.github.v3+json" \
@@ -127,6 +127,7 @@ jobs:
                 | jq '.[0].number')
             echo $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
             echo $PULL_REQUEST_NUMBER
+            echo $(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
 
             if [[ "$PULL_REQUEST_NUMBER" == "null" ]]; then
                 # The pull request is on the main (default) branch of the fork.
