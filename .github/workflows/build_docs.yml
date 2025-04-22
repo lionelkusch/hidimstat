@@ -2,8 +2,6 @@ name: Documentation
 
 on:
   pull_request:
-  push:
-    branches: main
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -19,6 +17,8 @@ permissions:
 jobs:
   build_docs:
     runs-on: ubuntu-latest
+    outputs:
+      url_doc: ${{ steps.upload_doc.outputs.artifact-url}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,13 +31,14 @@ jobs:
       - name: Sphinx build
         id: build-docs
         run: |
-          sphinx-build -b html doc_conf doc/_build/html
+          cd doc_conf; make html-noplot
       - name: Upload documentation
+        id: upload_doc
         if: steps.build-docs.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: DocHTML
-          path: doc/_build/html
+          path: doc_conf/_build/html
 
   deploy_on_main:
     runs-on: ubuntu-latest
@@ -68,3 +69,66 @@ jobs:
           directory: hidimstat
           github_token: ${{ secrets.GITHUB_TOKEN }}
           
+  deploy_documentation:
+    name: Deploy documentation  
+    runs-on: ubuntu-latest
+    needs: [build_docs]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Add SSH key
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo "${{ secrets.ACTIONS_SSH_DEPLOY }}" > ~/.ssh/github_actions
+          chmod 600 ~/.ssh/github_actions
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add ~/.ssh/github_actions
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: DocHTML
+          path: doc/_build/html
+
+      - name: deploy
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          COMMIT_SHA: ${{ github.event.head_commit.id }}
+        run: |
+          export ORGANIZATION="lionelkusch"
+          export DOC_REPO="lionelkusch.github.io"
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub actions"
+          ./build_tools/circle/push_doc.sh doc/_build/html
+
+  push_on_circle_ci:
+    runs-on: ubuntu-latest
+    # Run the job only if the "DocumentationBuilder" workflow succeeded
+    # Prevents this workflow from running on a fork.
+    # To test this workflow on a fork remove the `github.repository == nilearn/nilearn` condition
+    needs: [build_docs]
+    steps:
+    -   name: Trigger hosting job on circle ci
+        run: |
+            set -x -a
+            # get the number of the PR
+            # $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+            PULL_REQUEST_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+
+            # get the branch of the PR
+            BRANCH=pull/$PULL_REQUEST_NUMBER/head
+
+            # get URL for download artifact without identification
+            GITHUB_RUN_URL="https://nightly.link/$(echo ${{needs.build_docs.outputs.url_doc}} | cut -d/ -f4-8)/DocHTML.zip"
+
+            # Send the information to circleci
+            curl --request POST \
+            --url https://circleci.com/api/v2/project/gh/${{ github.repository }}/pipeline \
+            --header "Circle-Token: ${{ secrets.CIRCLE_CI }}" \
+            --header "content-type: application/json" \
+            --header "x-attribution-actor-id: github_actions" \
+            --header "x-attribution-login: github_actions" \
+            --data \{\"branch\":\"$BRANCH\",\"parameters\":\{\"GITHUB_RUN_URL\":\"$GITHUB_RUN_URL\"\}\}
