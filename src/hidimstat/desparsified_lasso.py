@@ -7,9 +7,11 @@ from sklearn.linear_model import Lasso
 from sklearn.utils.validation import check_memory
 
 from hidimstat.noise_std import reid
-from hidimstat.stat_tools import pval_from_two_sided_pval_and_sign
-from hidimstat.stat_tools import pval_from_cb
-from hidimstat.utils import _alpha_max
+from hidimstat.statistical_tools.p_values import (
+    pval_from_two_sided_pval_and_sign,
+    pval_from_cb,
+)
+from hidimstat._utils.regression import _alpha_max
 
 
 def desparsified_lasso(
@@ -36,7 +38,7 @@ def desparsified_lasso(
     Desparsified Lasso
 
     Algorithm based on Algorithm 1 of d-Lasso and d-MTLasso in
-    :cite:`chevalier2020statistical`.
+    :footcite:t:`chevalier2020statistical`.
 
     Parameters
     ----------
@@ -93,7 +95,7 @@ def desparsified_lasso(
     noise_method : {'AR', 'median'}, default='AR'
         Method to estimate noise covariance:
         - 'median': Uses median correlation between consecutive
-                    timepoints
+        timepoints
         - 'AR': Fits autoregressive model of specified order
 
     order : int, default=1
@@ -123,6 +125,8 @@ def desparsified_lasso(
     the consideration of unecessary additional parameters.
     Also, you may consider to center and scale `X` beforehand, notably if
     the data contained in `X` has not been prescaled from measurements.
+    Other relevant references: :footcite:t:`van2014asymptotically`,
+    :footcite:t:`zhang2014confidence`.
 
     References
     ----------
@@ -222,9 +226,11 @@ def desparsified_lasso_pvalue(
 ):
     """
     Calculate confidence intervals and p-values for desparsified lasso estimators.
+
     This function computes confidence intervals for the desparsified lasso
     estimator beta_hat.
     It can also return p-values derived from these confidence intervals.
+
     Parameters
     ----------
     n_samples : float
@@ -242,6 +248,7 @@ def desparsified_lasso_pvalue(
         Currently only "norm" supported.
     epsilon : float, default=1e-14
         Small value to avoid numerical issues in p-value calculation.
+
     Returns
     -------
     pval : ndarray, shape (n_features,)
@@ -408,7 +415,7 @@ def _compute_all_residuals(
 
     Notes
     -----
-    This implements the nodewise Lasso procedure from :cite:`chevalier2020statistical`
+    This implements the nodewise Lasso procedure from :footcite:t:`chevalier2020statistical`
     for estimating entries of the precision matrix needed in the
     desparsified Lasso. The procedure regresses each feature against
     all others using Lasso to obtain residuals and precision matrix estimates.

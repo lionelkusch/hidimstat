@@ -39,7 +39,7 @@ Imports needed for this script
     import matplotlib.pyplot as plt
     import numpy as np
     from hidimstat.dcrt import dcrt_zero, dcrt_pvalue
-    from hidimstat.scenario import multivariate_1D_simulation
+    from hidimstat._utils.scenario import multivariate_1D_simulation
 
     plt.rcParams.update({"font.size": 21})
 
@@ -164,9 +164,9 @@ Plotting the comparison
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 13.317 seconds)
+   **Total running time of the script:** (1 minutes 4.924 seconds)
 
-**Estimated memory usage:**  215 MB
+**Estimated memory usage:**  216 MB
 
 
 .. _sphx_glr_download_auto_examples_plot_dcrt_example.py:

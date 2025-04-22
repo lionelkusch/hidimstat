@@ -2,8 +2,11 @@ import numpy as np
 from joblib import Parallel, delayed
 from sklearn.utils.validation import check_memory
 
-from .clustered_inference import clustered_inference
-from .multi_sample_split import aggregate_medians, aggregate_quantiles
+from hidimstat.clustered_inference import clustered_inference
+from hidimstat.statistical_tools.multi_sample_split import (
+    aggregate_medians,
+    aggregate_quantiles,
+)
 
 
 def _ensembling(
@@ -62,7 +65,9 @@ def ensemble_clustered_inference(
     verbose=1,
     **kwargs,
 ):
-    """Ensemble clustered inference algorithm
+    """Ensemble clustered inference algorithm.
+
+    For more details, see :footcite:t:`chevalier2021decoding`.
 
     Parameters
     ----------
@@ -147,9 +152,7 @@ def ensemble_clustered_inference(
 
     References
     ----------
-    .. [1] Chevalier, J. A., Nguyen, T. B., Thirion, B., & Salmon, J. (2021).
-           Spatially relaxed inference on high-dimensional linear models.
-           arXiv preprint arXiv:2106.02590.
+    .. footbibliography::
     """
 
     memory = check_memory(memory=memory)
