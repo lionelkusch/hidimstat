@@ -58,7 +58,7 @@ jobs:
         - run:
             mkdir -p ~/.ssh
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo "${{ ACTIONS_SSH_DEPLOY }}" > ~/.ssh/github_actions
+            echo "${ACTIONS_SSH_DEPLOY}" > ~/.ssh/github_actions
             chmod 600 ~/.ssh/github_actions
             ssh-agent -a $SSH_AUTH_SOCK > /dev/null
             ssh-add ~/.ssh/github_actions
