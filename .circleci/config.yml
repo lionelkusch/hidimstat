@@ -22,7 +22,7 @@ jobs:
         -   store_artifacts:
                 path: DocHTML/
                 destination: html
-    python3:
+    build_doc:
         docker:
         - image: cimg/python:3.9
         environment:
