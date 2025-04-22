@@ -12,7 +12,7 @@ jobs:
         machine:
             image: ubuntu-2204:current
         environment:
-            GITHUB_ARTIFACT_URL: << pipeline.parameters.GITHUB_RUN_URL >>/DocHTML.zip
+            GITHUB_ARTIFACT_URL: << pipeline.parameters.GITHUB_RUN_URL >>
         steps:
         -   checkout
         -   run:
