@@ -17,6 +17,8 @@ permissions:
 jobs:
   build_docs:
     runs-on: ubuntu-latest
+    outputs:
+      url_doc: ${{ steps.upload_doc.outputs.artifact-url}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,6 +33,7 @@ jobs:
         run: |
           cd doc_conf; make html-noplot
       - name: Upload documentation
+        id: upload_doc
         if: steps.build-docs.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
@@ -111,13 +114,10 @@ jobs:
     -   name: Trigger hosting job on circle ci
         run: |
             set -x -a
-            curl --help
             # $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
             PULL_REQUEST_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
 
             BRANCH=pull/$PULL_REQUEST_NUMBER/head
-
-            GITHUB_RUN_URL="https://nightly.link/${{ github.repository }}/actions/runs/${{ github.event.workflow.id }}"
 
             curl --request POST \
             --url https://circleci.com/api/v2/project/gh/${{ github.repository }}/pipeline \
@@ -125,4 +125,4 @@ jobs:
             --header "content-type: application/json" \
             --header "x-attribution-actor-id: github_actions" \
             --header "x-attribution-login: github_actions" \
-            --data \{\"branch\":\"$BRANCH\",\"parameters\":\{\"GITHUB_RUN_URL\":\"$GITHUB_RUN_URL\"\}\}
+            --data \{\"branch\":\"$BRANCH\",\"parameters\":\{\"GITHUB_RUN_URL\":\"${{needs.build_docs.outputs.url_doc}}\"\}\}
