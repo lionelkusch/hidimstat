@@ -19,12 +19,12 @@ jobs:
                 name: Download documentation
                 command: bash build_tools/circle/download_documentation.sh
         -   store_artifacts:
-                path: doc/_build/html/
+                path: doc_conf/_build/html/
                 destination: dev
         # Persists the generated documentation, so that it
         # can be attached and deployed in the "deploy" job
         -   persist_to_workspace:
-                root: doc/_build
+                root: doc_conf/_build
                 paths:
                 -   html
 

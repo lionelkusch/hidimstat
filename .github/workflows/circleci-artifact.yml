@@ -20,5 +20,5 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           api-token: ${{ secrets.CIRCLE_CI }}
           artifact-path: 0/doc_conf/index.html
-          circleci-jobs: python3
+          circleci-jobs: host_docs
           job-title: Check the rendered docs here!
