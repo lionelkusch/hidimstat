@@ -119,7 +119,7 @@ jobs:
 
             BRANCH=pull/$PULL_REQUEST_NUMBER/head
             # get URL for download artifact without identification
-            GITHUB_RUN_URL = "https://nightly.link/$(echo ${{needs.build_docs.outputs.url_doc}} | cut -d/ -f-8)"
+            GITHUB_RUN_URL = "https://nightly.link/url?$(echo ${{needs.build_docs.outputs.url_doc}} | cut -d/ -f4-8)"
 
             curl --request POST \
             --url https://circleci.com/api/v2/project/gh/${{ github.repository }}/pipeline \
