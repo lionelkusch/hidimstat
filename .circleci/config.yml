@@ -24,7 +24,7 @@ jobs:
                 destination: html
     build_doc:
         docker:
-        - image: cimg/python
+        - image: cimg/python:3.13
         steps:
         - checkout
         - run: ./build_tools/circle/checkout_merge_commit.sh
