@@ -110,12 +110,8 @@ jobs:
     steps:
     -   name: Trigger hosting job on circle ci
         run: |
-            set -x
-            $(curl \
-                -H "Accept: application/vnd.github.v3+json" \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                "${{ github.api_url}}/repos/${{github.repository}}/commits/${{github.sha}}/pulls" 2>/dev/null \
-                | jq '.[0].number')
+            set -x -a
+            curl
             # $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
             PULL_REQUEST_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
 
