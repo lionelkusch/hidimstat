@@ -15,9 +15,10 @@ jobs:
             GITHUB_ARTIFACT_URL: << pipeline.parameters.GITHUB_RUN_URL >>
         steps:
         -   checkout
-        -   run:
-                name: Download documentation
-                command: bash build_tools/circle/download_documentation.sh
+        -   run: |
+                set -x -e
+                wget $GITHUB_ARTIFACT_URL
+                unzip DocHTML.zip -d DocHTML
         -   store_artifacts:
                 path: DocHTML/
                 destination: html
