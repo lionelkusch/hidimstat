@@ -52,7 +52,7 @@ jobs:
 
     deploy:
         docker:
-        - image: cimg/deploy
+        - image: cimg/deploy:2015.1
         steps:
         - checkout
         - run:
