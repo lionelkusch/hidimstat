@@ -56,6 +56,7 @@ jobs:
         steps:
         - checkout
         - run: |
+            set -x -a
             mkdir -p ~/.ssh
             ssh-keyscan github.com >> ~/.ssh/known_hosts
             echo "${ACTIONS_SSH_DEPLOY}" > ~/.ssh/github_actions
