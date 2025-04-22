@@ -80,16 +80,16 @@ jobs:
 workflows:
     version: 2
     build-doc-and-deploy:
-    jobs:
-        - build_doc
-        - deploy:
-            requires:
+        jobs:
             - build_doc
+            - deploy:
+                requires:
+                - build_doc
 
     host_and_deploy_doc:
         when:
             not:
                 equal: [none, << pipeline.parameters.GITHUB_RUN_URL >>]
-    # The jobs should run only when triggered by the workflow
+        # The jobs should run only when triggered by the workflow
         jobs:
-        -   host_docs
+            - host_docs
