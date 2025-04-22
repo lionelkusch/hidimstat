@@ -111,7 +111,7 @@ jobs:
     -   name: Trigger hosting job on circle ci
         run: |
             set -x -a
-            curl
+            curl --help
             # $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
             PULL_REQUEST_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
 
