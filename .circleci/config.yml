@@ -24,17 +24,7 @@ jobs:
                 destination: html
     build_doc:
         docker:
-        - image: cimg/python:3.9
-        environment:
-        - USERNAME: "jeromedockes"
-        - ORGANIZATION: "hidimstat"
-        - DOC_REPO: "hidimstat.github.io"
-        - DOC_URL: ""
-        - EMAIL: "jerome@dockes.org"
-        - MINICONDA_PATH: ~/miniconda
-        - CONDA_ENV_NAME: testenv
-        - PYTHON_VERSION: "3.12"
-        - OMP_NUM_THREADS: 2
+        - image: cimg/python
         steps:
         - checkout
         - run: ./build_tools/circle/checkout_merge_commit.sh
@@ -62,9 +52,16 @@ jobs:
 
     deploy:
         docker:
-        - image: cimg/python:3.9
+        - image: cimg/deploy
         steps:
         - checkout
+        - run:
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            echo "${{ ACTIONS_SSH_DEPLOY }}" > ~/.ssh/github_actions
+            chmod 600 ~/.ssh/github_actions
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+            ssh-add ~/.ssh/github_actions
         - run: ./build_tools/circle/checkout_merge_commit.sh
         # Attach documentation generated in the 'python3' step so that it can be
         # deployed.
