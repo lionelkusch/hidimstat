@@ -58,9 +58,9 @@ jobs:
         steps:
         - checkout
         - add_ssh_keys:
-          fingerprints:
-            - "SO:ME:FIN:G:ER:PR:IN:T"
-            - "SHA256:NPj4IcXxqQEKGXOghi/QbG2sohoNfvZ30JwCcdSSNM0"
+            fingerprints:
+                - "SO:ME:FIN:G:ER:PR:IN:T"
+                - "SHA256:NPj4IcXxqQEKGXOghi/QbG2sohoNfvZ30JwCcdSSNM0"
         - run: ./build_tools/circle/checkout_merge_commit.sh
         # Attach documentation generated in the 'python3' step so that it can be
         # deployed.
