@@ -104,7 +104,7 @@ jobs:
           git config --global user.name "GitHub actions"
           ./build_tools/circle/push_doc.sh doc/_build/html
 
-  push:
+  push_on_circle_ci:
     runs-on: ubuntu-latest
     # Run the job only if the "DocumentationBuilder" workflow succeeded
     # Prevents this workflow from running on a fork.
