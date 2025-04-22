@@ -15,10 +15,12 @@ jobs:
             GITHUB_ARTIFACT_URL: << pipeline.parameters.GITHUB_RUN_URL >>
         steps:
         -   checkout
-        -   run: |
-                set -x -e
-                wget $GITHUB_ARTIFACT_URL
-                unzip DocHTML.zip -d DocHTML
+        -   run: 
+                name: "unzip artifact"
+                command: |
+                    set -x -e
+                    wget $GITHUB_ARTIFACT_URL
+                    unzip DocHTML.zip -d DocHTML
         -   store_artifacts:
                 path: DocHTML/
                 destination: html
@@ -55,15 +57,10 @@ jobs:
         - image: cimg/deploy:2025.01
         steps:
         - checkout
-        - run: |
-            set -x -a
-            mkdir -p ~/.ssh
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo "${ACTIONS_SSH_DEPLOY}" > ~/.ssh/github_actions
-            cat ~/.ssh/github_actions
-            chmod 600 ~/.ssh/github_actions
-            eval $(ssh-agent -s)
-            ssh-add ~/.ssh/github_actions
+        - add_ssh_keys:
+          fingerprints:
+            - "SO:ME:FIN:G:ER:PR:IN:T"
+            - "SHA256:NPj4IcXxqQEKGXOghi/QbG2sohoNfvZ30JwCcdSSNM0"
         - run: ./build_tools/circle/checkout_merge_commit.sh
         # Attach documentation generated in the 'python3' step so that it can be
         # deployed.
