@@ -113,11 +113,11 @@ jobs:
     -   name: Trigger hosting job on circle ci
         run: |
             echo ${{ github.event}}
-            echo ${{ github.event_name}}
+            echo ${{ github.GITHUB_SHA }}
             echo ${{ github.event.commits.id}}
             echo ${{ github.event.workflow.head_sha}}
-            COMMIT_SHA=${{ github.event.workflow.head_sha }}
-            REPO_NAME=${{ github.event.workflow.head_repository.full_name }}
+            COMMIT_SHA=${GITHUB_SHA}
+            REPO_NAME=${{ github.event.repository.name }}
             echo "https://api.github.com/repos/$REPO_NAME/commits/$COMMIT_SHA/pulls"
 
             PULL_REQUEST_NUMBER=$(curl \
