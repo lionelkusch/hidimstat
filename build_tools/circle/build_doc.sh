@@ -92,7 +92,7 @@ else
 fi
 
 pip install uv
-uv pip install -e ".[doc]"
+uv --system pip install -e ".[doc]"
 
 # The pipefail is requested to propagate exit code
 set -o pipefail && cd doc_conf && make $make_args 2>&1 | tee ~/log.txt
