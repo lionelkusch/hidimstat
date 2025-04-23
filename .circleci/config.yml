@@ -24,6 +24,7 @@ jobs:
         -   store_artifacts:
                 path: DocHTML/
                 destination: html
+
     build_doc:
         docker:
         - image: cimg/python:3.13
@@ -62,14 +63,18 @@ jobs:
         - checkout
         - add_ssh_keys:
             fingerprints:
-                - "SO:ME:FIN:G:ER:PR:IN:T"
-                - "SHA256:NPj4IcXxqQEKGXOghi/QbG2sohoNfvZ30JwCcdSSNM0"
-        - run: ./build_tools/circle/checkout_merge_commit.sh
+                - "SHA256:SSOrd4ijaSJjqXxqBZTZ1d6oxXtMr+TpE1CWZSfqh7k"
+        - run: 
+            command: ./build_tools/circle/checkout_merge_commit.sh
         # Attach documentation generated in the 'python3' step so that it can be
         # deployed.
         - attach_workspace:
             at: doc_conf/_build/html
-        - run: ls -ltrh doc_conf/_build/html
+        - run: 
+            command: |
+                mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+                ls -ltrh doc_conf/_build/html
         - deploy:
             command: |
                 export ORGANIZATION="lionelkusch"
