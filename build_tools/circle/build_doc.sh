@@ -91,8 +91,10 @@ else
     make_args="html"
 fi
 
+python -m venv .venv
+source .venv/bin/activate
 pip install uv
-uv pip install --system -e ".[doc]"
+uv pip install -e ".[doc]"
 
 # The pipefail is requested to propagate exit code
 set -o pipefail && cd doc_conf && make $make_args 2>&1 | tee ~/log.txt
