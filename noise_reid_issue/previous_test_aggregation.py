@@ -114,5 +114,22 @@ if __name__ == "__main__":
     # exp:0 max ratio: 331.4389851363045, sdt: 13.612392514260577, diag ratio max: 0.9870821038839529, std: 0.049744587102200005, std hat: 0.06440020562989011
     # exp:1 max ratio: 290.8659608787585, sdt: 11.956885461824355, diag ratio max: 1.0536219976776595, std: 0.017161886210423447, std hat: 0.01662622669320492
     # exp:2 max ratio: 345.44843545629095, sdt: 13.89256200622719, diag ratio max: 1.193929610044668, std: 0.12581595442559174, std hat: 0.1453495605395544
-
+    result = test_group_reid(
+        data_generator=multivariate_temporal_simulation,
+        n_samples=100,
+        n_features=50,
+        n_times=10,
+    )
+    # exp:0 max ratio: 1.4176672755057076, sdt: 0.1466693905713788, diag ratio max: 1.2587996874049177, std: 0.10832565381107104, std hat: 0.10523699369548947
+    # exp:1 max ratio: 1.3554113010679167, sdt: 0.17124178031015336, diag ratio max: 1.7160071285836411, std: 0.1891848396423378, std hat: 0.1337042416659642
+    # exp:2 max ratio: 1.3825166929225128, sdt: 0.15492524853766512, diag ratio max: 1.2535562413430217, std: 0.13335196332233068, std hat: 0.13005220095281642
+    result = test_group_reid(
+        data_generator=multivariate_temporal_simulation,
+        n_samples=100,
+        n_features=50,
+        n_times=100,
+    )
+    # exp:0 max ratio: 3.8301165475565315, sdt: 0.37979660055892817, diag ratio max: 1.0253259250495033, std: 0.052032851519795184, std hat: 0.06218926320001944
+    # exp:1 max ratio: 3.2511780844809515, sdt: 0.35159867053975347, diag ratio max: 1.1788778797727513, std: 0.06537153442539377, std hat: 0.059762912336818186
+    # exp:2 max ratio: 3.9415446571925026, sdt: 0.3882255322249091, diag ratio max: 1.2153931645505112, std: 0.12857716450427034, std hat: 0.13750352143756134
     # test_group_reid(data_generator=multivariate_simulation)
