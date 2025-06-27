@@ -81,55 +81,64 @@ def test_group_reid(
         sigma_cov = np.array([a[3] for a in result[i]])
         sigma_cov_hat = np.array([a[4] for a in result[i]])
         print(
-            f"exp:{i} max ratio: {np.max(error_array)}, sdt: {np.std(error_array)}, diag ratio max: {np.max(sigma_cov/sigma_cov_hat)}, std: {np.std(sigma_cov/sigma_cov_hat)}, std hat: {np.std(sigma_cov_hat)}"
+            f"exp:{i} max ratio: {np.max(error_array)}, sdt: {np.std(error_array)}, diag ratio max: {np.max(sigma_cov/sigma_cov_hat)}, diag ratio min: {np.min(sigma_cov/sigma_cov_hat)}, std: {np.std(sigma_cov/sigma_cov_hat)}, std hat: {np.std(sigma_cov_hat)}"
         )
     return result
 
 
 if __name__ == "__main__":
-    result = test_group_reid(
-        data_generator=multivariate_temporal_simulation,
-        n_samples=30,
-        n_features=50,
-        n_times=10,
-    )
-    # exp:0 max ratio: 3.439288434057792, sdt: 0.48217730090438066, diag ratio max: 1.1103285863263137, std: 0.1959813496946681, std hat: 0.3467094730285075
-    # exp:1 max ratio: 3.9165866211893112, sdt: 0.6412922217672975, diag ratio max: 31.33583998091608, std: 6.556760147538239, std hat: 0.49979061307834366
-    # exp:2 max ratio: 3.9769562707735555, sdt: 0.5410626268288273, diag ratio max: 1.4846400555431416, std: 0.2600512313886619, std hat: 0.45177274100920295
-    result = test_group_reid(
-        data_generator=multivariate_temporal_simulation,
-        n_samples=30,
-        n_features=50,
-        n_times=1000,
-    )
-    # exp:0 max ratio: 6789735.32677102, sdt: 99016.70445693615, diag ratio max: 0.8673344911245104, std: 0.21196035511571865, std hat: 4.689410936379959
-    # exp:1 max ratio: 1185690.4960165657, sdt: 18915.448701284862, diag ratio max: 1.2713617065395322, std: 0.06620695593749118, std hat: 0.05214848691764928
-    # exp:2 max ratio: 7666165.042759163, sdt: 102369.59130088573, diag ratio max: 1.0937381533660795, std: 0.2299411466436768, std hat: 7.1993186446118616
+    # result = test_group_reid(
+    #     data_generator=multivariate_temporal_simulation,
+    #     n_samples=30,
+    #     n_features=50,
+    #     n_times=10,
+    # )
+    # # exp:0 max ratio: 3.439288434057792, sdt: 0.48217730090438066, diag ratio max: 1.1103285863263137, std: 0.1959813496946681, std hat: 0.3467094730285075
+    # # exp:1 max ratio: 3.9165866211893112, sdt: 0.6412922217672975, diag ratio max: 31.33583998091608, std: 6.556760147538239, std hat: 0.49979061307834366
+    # # exp:2 max ratio: 3.9769562707735555, sdt: 0.5410626268288273, diag ratio max: 1.4846400555431416, std: 0.2600512313886619, std hat: 0.45177274100920295
+    # result = test_group_reid(
+    #     data_generator=multivariate_temporal_simulation,
+    #     n_samples=30,
+    #     n_features=50,
+    #     n_times=1000,
+    # )
+    # # exp:0 max ratio: 6789735.32677102, sdt: 99016.70445693615, diag ratio max: 0.8673344911245104, std: 0.21196035511571865, std hat: 4.689410936379959
+    # # exp:1 max ratio: 1185690.4960165657, sdt: 18915.448701284862, diag ratio max: 1.2713617065395322, std: 0.06620695593749118, std hat: 0.05214848691764928
+    # # exp:2 max ratio: 7666165.042759163, sdt: 102369.59130088573, diag ratio max: 1.0937381533660795, std: 0.2299411466436768, std hat: 7.1993186446118616
+    # result = test_group_reid(
+    #     data_generator=multivariate_temporal_simulation,
+    #     n_samples=100,
+    #     n_features=50,
+    #     n_times=1000,
+    # )
+    # # exp:0 max ratio: 331.4389851363045, sdt: 13.612392514260577, diag ratio max: 0.9870821038839529, std: 0.049744587102200005, std hat: 0.06440020562989011
+    # # exp:1 max ratio: 290.8659608787585, sdt: 11.956885461824355, diag ratio max: 1.0536219976776595, std: 0.017161886210423447, std hat: 0.01662622669320492
+    # # exp:2 max ratio: 345.44843545629095, sdt: 13.89256200622719, diag ratio max: 1.193929610044668, std: 0.12581595442559174, std hat: 0.1453495605395544
     result = test_group_reid(
         data_generator=multivariate_temporal_simulation,
         n_samples=100,
         n_features=50,
-        n_times=1000,
-    )
-    # exp:0 max ratio: 331.4389851363045, sdt: 13.612392514260577, diag ratio max: 0.9870821038839529, std: 0.049744587102200005, std hat: 0.06440020562989011
-    # exp:1 max ratio: 290.8659608787585, sdt: 11.956885461824355, diag ratio max: 1.0536219976776595, std: 0.017161886210423447, std hat: 0.01662622669320492
-    # exp:2 max ratio: 345.44843545629095, sdt: 13.89256200622719, diag ratio max: 1.193929610044668, std: 0.12581595442559174, std hat: 0.1453495605395544
-    result = test_group_reid(
-        data_generator=multivariate_temporal_simulation,
-        n_samples=100,
-        n_features=50,
         n_times=10,
     )
-    # exp:0 max ratio: 1.4176672755057076, sdt: 0.1466693905713788, diag ratio max: 1.2587996874049177, std: 0.10832565381107104, std hat: 0.10523699369548947
-    # exp:1 max ratio: 1.3554113010679167, sdt: 0.17124178031015336, diag ratio max: 1.7160071285836411, std: 0.1891848396423378, std hat: 0.1337042416659642
-    # exp:2 max ratio: 1.3825166929225128, sdt: 0.15492524853766512, diag ratio max: 1.2535562413430217, std: 0.13335196332233068, std hat: 0.13005220095281642
+    # exp:0 max ratio: 1.4176672755057076, sdt: 0.1466693905713788, diag ratio max: 1.2587996874049177, diag ratio min: 0.8143133195987124, std: 0.10832565381107104, std hat: 0.10523699369548947
+    # exp:1 max ratio: 1.3554113010679167, sdt: 0.17124178031015336, diag ratio max: 1.7160071285836411, diag ratio min: 0.8517287352893733, std: 0.1891848396423378, std hat: 0.1337042416659642
+    # exp:2 max ratio: 1.3825166929225128, sdt: 0.15492524853766512, diag ratio max: 1.2535562413430217, diag ratio min: 0.8108158699446654, std: 0.13335196332233068, std hat: 0.13005220095281642
     result = test_group_reid(
         data_generator=multivariate_temporal_simulation,
         n_samples=100,
         n_features=50,
         n_times=100,
     )
-    # exp:0 max ratio: 3.8301165475565315, sdt: 0.37979660055892817, diag ratio max: 1.0253259250495033, std: 0.052032851519795184, std hat: 0.06218926320001944
-    # exp:1 max ratio: 3.2511780844809515, sdt: 0.35159867053975347, diag ratio max: 1.1788778797727513, std: 0.06537153442539377, std hat: 0.059762912336818186
-    # exp:2 max ratio: 3.9415446571925026, sdt: 0.3882255322249091, diag ratio max: 1.2153931645505112, std: 0.12857716450427034, std hat: 0.13750352143756134
-    # test_group_reid(data_generator=multivariate_simulation)
+    # exp:0 max ratio: 3.8301165475565315, sdt: 0.37979660055892817, diag ratio max: 1.0253259250495033, diag ratio min: 0.8036434877305134, std: 0.052032851519795184, std hat: 0.06218926320001944
+    # exp:1 max ratio: 3.2511780844809515, sdt: 0.35159867053975347, diag ratio max: 1.1788778797727513, diag ratio min: 0.9448116383889266, std: 0.06537153442539377, std hat: 0.059762912336818186
+    # exp:2 max ratio: 3.9415446571925026, sdt: 0.3882255322249091, diag ratio max: 1.2153931645505112, diag ratio min: 0.770962708765433, std: 0.12857716450427034, std hat: 0.13750352143756134
+
+    result = test_group_reid(
+        data_generator=multivariate_temporal_simulation,
+        n_samples=50,
+        n_features=20,
+        n_times=50,
+    )
+    # exp:0 max ratio: 4.311528266558966, sdt: 0.38719879612748465, diag ratio max: 1.1228814322052731, diag ratio min: 0.747158293406735, std: 0.09375217876074234, std hat: 0.11326746898503602
+    # exp:1 max ratio: 4.021947171830923, sdt: 0.34412384634429366, diag ratio max: 1.325262018420676, diag ratio min: 0.8010866430461372, std: 0.12608837770221495, std hat: 0.1136960979669241
+    # exp:2 max ratio: 4.572971474479305, sdt: 0.4198994608119369, diag ratio max: 1.3349016173497303, diag ratio min: 0.6664579805674001, std: 0.18317825159261136, std hat: 0.2068049277156674
