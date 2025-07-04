@@ -20,7 +20,7 @@ def test_group_reid(
     # ##########
     support_size = 2
     for seed in range(20):
-        X, Y, beta, non_zero, noise_mag, eps = data_generator(
+        X, Y, beta, noise = data_generator(
             n_samples=n_samples,
             n_features=n_features,
             n_times=n_times,
