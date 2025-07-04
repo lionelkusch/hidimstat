@@ -74,4 +74,4 @@ def multivariate_temporal_simulation(
 
     Y = np.dot(X, beta) + noise
 
-    return X, Y, beta, None, 1.0, noise
+    return X, Y, beta, noise
