@@ -11,35 +11,37 @@ def test_group_reid(
     n_samples=30,
     n_features=50,
     n_times=10,
-    sigma=1.0,
     rho=0.9,
+    snr=3.0,
     nb_seed=20,
+    support_size=2,
 ):
     """Estimating (temporal) noise covariance matrix in two scenarios.
     First scenario: no data structure and a support of size 2.
     Second scenario: no data structure and an empty support."""
 
     corr = toeplitz(np.geomspace(1, rho ** (n_times - 1), n_times))
-    cov = np.outer(sigma, sigma) * corr
+    cov = support_size / snr * corr
+    diag_cov = np.diag(cov)
 
     # First expe
     # ##########
-    support_size = 2
     result = [[], [], []]
     for seed in range(nb_seed):
-        X, Y, beta, non_zero, noise_mag, eps = data_generator(
+        X, Y, beta, noise = data_generator(
             n_samples=n_samples,
             n_features=n_features,
-            n_times=n_times,
+            n_targets=n_times,
             support_size=support_size,
-            sigma_noise=sigma,
             rho_serial=rho,
+            signal_noise_ratio=snr,
             seed=seed,
         )
 
         # max_iter=1 to get a better coverage
         cov_hat, _ = reid(X, Y, multioutput=True, tolerance=1e-3, max_iterance=1)
-        error_ratio = cov_hat / cov
+        error_ratio = np.abs(cov_hat - cov) / cov
+        error_ratio_diag = np.abs(np.diag(cov_hat) - diag_cov) / diag_cov
         result[0].append(
             (cov, cov_hat, error_ratio, np.diag(cov)[0], np.diag(cov_hat)[0])
         )
@@ -47,12 +49,12 @@ def test_group_reid(
         # print(
         #     f"1: seed:{seed}, ratio_error: {np.max(error_ratio)} {np.log(np.min(error_ratio))} expected sigma {np.diag(cov)[0]}, estimated sigma {np.diag(cov_hat)[0]}"
         # )
-
-        # assert_almost_equal(np.max(error_ratio), 1.0, decimal=0)
-        # assert_almost_equal(np.log(np.min(error_ratio)), 0.0, decimal=1)
+        print(np.mean(error_ratio_diag), np.max(error_ratio_diag))
+        assert snr > 1e3 or np.mean(error_ratio_diag) < 0.3
 
         cov_hat, _ = reid(X, Y, multioutput=True, method="AR")
-        error_ratio = cov_hat / cov
+        error_ratio = np.abs(cov_hat - cov) / cov
+        error_ratio_diag = np.abs(np.diag(cov_hat) - diag_cov) / diag_cov
         result[1].append(
             (cov, cov_hat, error_ratio, np.diag(cov)[0], np.diag(cov_hat)[0])
         )
@@ -60,12 +62,12 @@ def test_group_reid(
         # print(
         #     f"2: seed:{seed}, ratio_error: {np.max(error_ratio)} {np.log(np.min(error_ratio))} expected sigma {np.diag(cov)[0]}, estimated sigma {np.diag(cov_hat)[0]}"
         # )
-
-        # assert_almost_equal(np.max(error_ratio), 1.0, decimal=0)
-        # assert_almost_equal(np.log(np.min(error_ratio)), 0.0, decimal=0)
+        print(np.mean(error_ratio_diag), np.max(error_ratio_diag))
+        assert snr > 1e3 or np.mean(error_ratio_diag) < 0.3
 
         cov_hat, _ = reid(X, Y, multioutput=True, stationary=False)
-        error_ratio = cov_hat / cov
+        error_ratio = np.abs(cov_hat - cov) / cov
+        error_ratio_diag = np.abs(np.diag(cov_hat) - diag_cov) / diag_cov
         result[2].append(
             (cov, cov_hat, error_ratio, np.diag(cov)[0], np.diag(cov_hat)[0])
         )
@@ -73,78 +75,79 @@ def test_group_reid(
         # print(
         #     f"3: seed:{seed}, ratio_error: {np.max(error_ratio)} {np.log(np.min(error_ratio))} expected sigma {np.diag(cov)[0]}, estimated sigma {np.diag(cov_hat)[0]}"
         # )
+        print(
+            np.mean(error_ratio_diag),
+            np.max(error_ratio_diag),
+            np.min(error_ratio_diag),
+        )
+        # assert np.max(error_ratio_diag) > 0.4
 
-        # assert_almost_equal(np.max(error_ratio), 1.0, decimal=0)
-        # assert_almost_equal(np.log(p.min(error_ratio)), 0.0, decimal=0)
+        # assert np.all(error_ratio > 0.5)
+    result_mean_std = []
     for i in range(3):
         error_array = np.array([a[2] for a in result[i]])
         sigma_cov = np.array([a[3] for a in result[i]])
         sigma_cov_hat = np.array([a[4] for a in result[i]])
+        result_mean_std.append([np.mean(sigma_cov_hat), np.std(sigma_cov_hat)])
+        # print(f"mean estimation: {np.mean(sigma_cov_hat)} {np.std(sigma_cov_hat)}")
         print(
             f"exp:{i} max ratio: {np.max(error_array)}, sdt: {np.std(error_array)}, diag ratio max: {np.max(sigma_cov/sigma_cov_hat)}, diag ratio min: {np.min(sigma_cov/sigma_cov_hat)}, std: {np.std(sigma_cov/sigma_cov_hat)}, std hat: {np.std(sigma_cov_hat)}"
         )
-    return result
+    return result_mean_std
 
 
 if __name__ == "__main__":
+    import os
+
+    path = os.path.dirname(os.path.abspath(__file__))
+    from matplotlib import pyplot as plt
+
     # result = test_group_reid(
     #     data_generator=multivariate_temporal_simulation,
     #     n_samples=30,
     #     n_features=50,
     #     n_times=10,
     # )
-    # # exp:0 max ratio: 3.439288434057792, sdt: 0.48217730090438066, diag ratio max: 1.1103285863263137, std: 0.1959813496946681, std hat: 0.3467094730285075
-    # # exp:1 max ratio: 3.9165866211893112, sdt: 0.6412922217672975, diag ratio max: 31.33583998091608, std: 6.556760147538239, std hat: 0.49979061307834366
-    # # exp:2 max ratio: 3.9769562707735555, sdt: 0.5410626268288273, diag ratio max: 1.4846400555431416, std: 0.2600512313886619, std hat: 0.45177274100920295
     # result = test_group_reid(
     #     data_generator=multivariate_temporal_simulation,
     #     n_samples=30,
     #     n_features=50,
     #     n_times=1000,
     # )
-    # # exp:0 max ratio: 6789735.32677102, sdt: 99016.70445693615, diag ratio max: 0.8673344911245104, std: 0.21196035511571865, std hat: 4.689410936379959
-    # # exp:1 max ratio: 1185690.4960165657, sdt: 18915.448701284862, diag ratio max: 1.2713617065395322, std: 0.06620695593749118, std hat: 0.05214848691764928
-    # # exp:2 max ratio: 7666165.042759163, sdt: 102369.59130088573, diag ratio max: 1.0937381533660795, std: 0.2299411466436768, std hat: 7.1993186446118616
     # result = test_group_reid(
     #     data_generator=multivariate_temporal_simulation,
     #     n_samples=100,
     #     n_features=50,
     #     n_times=1000,
     # )
-    # # exp:0 max ratio: 331.4389851363045, sdt: 13.612392514260577, diag ratio max: 0.9870821038839529, std: 0.049744587102200005, std hat: 0.06440020562989011
-    # # exp:1 max ratio: 290.8659608787585, sdt: 11.956885461824355, diag ratio max: 1.0536219976776595, std: 0.017161886210423447, std hat: 0.01662622669320492
-    # # exp:2 max ratio: 345.44843545629095, sdt: 13.89256200622719, diag ratio max: 1.193929610044668, std: 0.12581595442559174, std hat: 0.1453495605395544
     # result = test_group_reid(
     #     data_generator=multivariate_temporal_simulation,
     #     n_samples=100,
     #     n_features=50,
     #     n_times=10,
     # )
-    # # exp:0 max ratio: 1.4176672755057076, sdt: 0.1466693905713788, diag ratio max: 1.2587996874049177, diag ratio min: 0.8143133195987124, std: 0.10832565381107104, std hat: 0.10523699369548947
-    # # exp:1 max ratio: 1.3554113010679167, sdt: 0.17124178031015336, diag ratio max: 1.7160071285836411, diag ratio min: 0.8517287352893733, std: 0.1891848396423378, std hat: 0.1337042416659642
-    # # exp:2 max ratio: 1.3825166929225128, sdt: 0.15492524853766512, diag ratio max: 1.2535562413430217, diag ratio min: 0.8108158699446654, std: 0.13335196332233068, std hat: 0.13005220095281642
     # result = test_group_reid(
     #     data_generator=multivariate_temporal_simulation,
     #     n_samples=100,
     #     n_features=50,
     #     n_times=100,
     # )
-    # # exp:0 max ratio: 3.8301165475565315, sdt: 0.37979660055892817, diag ratio max: 1.0253259250495033, diag ratio min: 0.8036434877305134, std: 0.052032851519795184, std hat: 0.06218926320001944
-    # # exp:1 max ratio: 3.2511780844809515, sdt: 0.35159867053975347, diag ratio max: 1.1788778797727513, diag ratio min: 0.9448116383889266, std: 0.06537153442539377, std hat: 0.059762912336818186
-    # # exp:2 max ratio: 3.9415446571925026, sdt: 0.3882255322249091, diag ratio max: 1.2153931645505112, diag ratio min: 0.770962708765433, std: 0.12857716450427034, std hat: 0.13750352143756134
-
-    result = test_group_reid(
-        data_generator=multivariate_temporal_simulation,
-        nb_seed=100,
-        n_samples=50,
-        n_features=20,
-        n_times=50,
-    )
-    # nb_seed: 20
-    # exp:0 max ratio: 4.311528266558966, sdt: 0.38719879612748465, diag ratio max: 1.1228814322052731, diag ratio min: 0.747158293406735, std: 0.09375217876074234, std hat: 0.11326746898503602
-    # exp:1 max ratio: 4.021947171830923, sdt: 0.34412384634429366, diag ratio max: 1.325262018420676, diag ratio min: 0.8010866430461372, std: 0.12608837770221495, std hat: 0.1136960979669241
-    # exp:2 max ratio: 4.572971474479305, sdt: 0.4198994608119369, diag ratio max: 1.3349016173497303, diag ratio min: 0.6664579805674001, std: 0.18317825159261136, std hat: 0.2068049277156674
-    # nb_seed: 100
-    # exp:0 max ratio: 4.383042410266335, sdt: 0.3648200077133353, diag ratio max: 1.289186822371986, diag ratio min: 0.7315723068215791, std: 0.09383055901427953, std hat: 0.1081327050579167
-    # exp:1 max ratio: 4.021947171830923, sdt: 0.32346116415291004, diag ratio max: 1.6720345432315011, diag ratio min: 0.8010866430461372, std: 0.13585057450237029, std hat: 0.10759341990615476
-    # exp:2 max ratio: 5.390371804881944, sdt: 0.39206617729013116, diag ratio max: 1.3401409394737522, diag ratio min: 0.6173785378002424, std: 0.17609820752018712, std hat: 0.20098963951453866
+    range_value_snr = np.logspace(-10, 9, 30)
+    range_support_size = range(1, 15)
+    for support_size in range_support_size:
+        result = []
+        for i in range_value_snr:
+            print("run tests", i, support_size)
+            result.append(
+                test_group_reid(
+                    data_generator=multivariate_simulation,
+                    nb_seed=20,
+                    n_samples=100,
+                    n_features=20,
+                    n_times=50,
+                    snr=i,
+                    support_size=support_size,
+                )
+            )
+        result = np.array(result)
+        np.save("result_" + str(support_size) + ".npy", result)
