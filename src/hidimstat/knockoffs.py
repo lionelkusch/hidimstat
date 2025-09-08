@@ -210,6 +210,8 @@ class ModelXKnockoff(BaseVariableImportance):
         X_tildes = []
         for i in range(self.n_repeat):
             X_tildes.append(self.generator.sample())
+            if i == 0:
+                print(X_tildes[0][0])
 
         parallel = Parallel(self.n_jobs, verbose=self.joblib_verbose)
         self.test_scores_ = np.array(
@@ -271,20 +273,37 @@ def model_x_knockoff(
     y,
     generator=GaussianDistribution(cov_estimator=LedoitWolf(assume_centered=True)),
     statistical_test=lasso_statistic_with_sampling,
+    centered=True,
     joblib_verbose=0,
     n_repeat=1,
     n_jobs=1,
     memory=None,
+    fdr=0.1,
+    fdr_control="bhq",
+    evalues=False,
+    reshaping_function=None,
+    adaptive_aggregation=False,
+    gamma=0.5,
 ):
-    model_x_knockoff = ModelXKnockoff(
+    methods = ModelXKnockoff(
         generator=generator,
         statistical_test=statistical_test,
+        centered=centered,
         n_repeat=n_repeat,
         n_jobs=n_jobs,
         memory=memory,
         joblib_verbose=joblib_verbose,
     )
-    return model_x_knockoff.fit_importance(X, y)
+    methods.fit_importance(X, y)
+    selected = methods.selection_fdr(
+        fdr=fdr,
+        fdr_control=fdr_control,
+        evalues=evalues,
+        reshaping_function=reshaping_function,
+        adaptive_aggregation=adaptive_aggregation,
+        gamma=gamma,
+    )
+    return selected, methods.importances_, methods.pvalues_
 
 
 # use the docstring of the class for the function
