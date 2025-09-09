@@ -160,20 +160,18 @@ class BaseVariableImportance(BaseEstimator):
 
         Parameters
         ----------
-        fdr : float, default=None
+        fdr : float
             The target false discovery rate level (between 0 and 1)
-        fdr_control: string, default="bhq"
+        fdr_control: str, default="bhq"
             The FDR control method to use. Options are:
             - "bhq": Benjamini-Hochberg procedure
             - 'bhy': Benjamini-Hochberg-Yekutieli procedure
         reshaping_function: callable, default=None
             Reshaping function for BHY method, default uses sum of reciprocals
-        adaptive_aggregation: boolean, default=False
-            If True, uses adaptive weights for p-value aggregation.
-            Only applicable when evalues=False.
-        gamma: boolean, default=0.5
-            The gamma parameter for quantile aggregation of p-values.
-            Only used when evalues=False.
+        adaptive_aggregation: bool, default=False
+            If True, uses adaptive weights for p-value aggregation
+        gamma: float, default=0.5
+            The gamma parameter for quantile aggregation of p-values (between 0 and 1)
 
         Returns
         -------
@@ -183,7 +181,7 @@ class BaseVariableImportance(BaseEstimator):
         Raises
         ------
         AssertionError
-            If test_scores\_ is None or if incompatible combinations of parameters are provided
+            If list_pvalues_ attribute is missing or fdr_control is invalid
         """
         assert hasattr(
             self, "list_pvalues_"
