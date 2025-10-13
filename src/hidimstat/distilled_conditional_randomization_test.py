@@ -245,9 +245,9 @@ class D0CRT(BaseVariableImportance):
                 sigma_X=self.sigma_X is None,
                 fit_y=self.fit_y,
                 model_distillation_x=self.model_distillation_x,
-                random_state=rng,
+                random_state=rng_spawn,
             )
-            for idx, rng in zip(
+            for idx, rng_spawn in zip(
                 np.where(self.selection_set_)[0],
                 rng.spawn(np.sum(self.selection_set_)),
             )
